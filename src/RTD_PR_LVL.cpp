@@ -1,9 +1,9 @@
 #include <Adafruit_MAX31865.h>
-#include "pindef.h"
+//#include "pindef.h"
 #include <Arduino.h>
 #include <Wire.h>
 #include "RTD_PR_LVL.h"
-#include <VL6180X.h>
+//#include <VL6180X.h>
 
 SimpleKalmanFilter smoothPressure(0.6f, 0.6f, 0.1f);
 SimpleKalmanFilter smoothPumpFlow(0.1f, 0.1f, 0.01f);
