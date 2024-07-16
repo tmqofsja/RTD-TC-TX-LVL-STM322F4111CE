@@ -1,4 +1,4 @@
-#include <Adafruit_MAX31865.h>
+//#include <Adafruit_MAX31865.h>
 //#include "pindef.h"
 #include <Arduino.h>
 #include <Wire.h>
