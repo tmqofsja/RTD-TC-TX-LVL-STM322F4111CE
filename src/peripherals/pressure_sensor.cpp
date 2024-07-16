@@ -54,9 +54,9 @@ float getPressure(void) {  //returns sensor pressure data
   currentPressure = (ADS.getValue() - 2666) / 1777.8f; // 16bit
 #endif
 //===========================================
-//float ddd = ADS.getValue();
-//USART_ESP.print("ADS.getvalue = ");
-//USART_ESP.println(ddd);  
+float ddd = ADS.getValue();
+USART_ESP.print("ADS.getvalue = ");
+USART_ESP.println(ddd);  
 //=============================================
 
 Serial.print("press = ");
@@ -88,8 +88,8 @@ void getAdsError(void) {
   short result = ADS.getError();
 //======================================
   if (result != 0) { 
-//    USART_ESP.print("geterror no = ");
-//    USART_ESP.println(result);  
+    USART_ESP.print("geterror no = ");
+    USART_ESP.println(result);  
   }
 //=====================================  
   if (result == 0) return;

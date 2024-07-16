@@ -21,6 +21,8 @@ static void sensorsReadPressure(void);
 #include "peripherals/pressure_sensor.h"
 #include "peripherals/thermocouple.h"
 #include "peripherals/peripherals.h"
+#include "peripherals/tof.h"
+
 
 
 

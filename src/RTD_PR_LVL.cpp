@@ -12,7 +12,8 @@ SimpleKalmanFilter smoothConsideredFlow(0.1f, 0.1f, 0.1f);
 
 SensorState currentState;
 
-VL6180X sensor; // TOF050C-VL6180x Raser waterlevel
+// VL6180X sensor; // TOF050C-VL6180x Raser waterlevel
+TOF tof;
 
 void setup()
 {
@@ -20,8 +21,10 @@ void setup()
   pinInit();
   lcdInit();
   thermocoupleInit();
-//  RTD_Init_Max31865();
-  lvl_init_VL6180X();
+  //  RTD_Init_Max31865();
+  // Init the tof sensor
+  tof.init(currentState);
+  // lvl_init_VL6180X();
   adsInit(); // press tx
 
   // Init the tof sensor
@@ -51,11 +54,10 @@ static void sensorsReadTemperature(void)
 {
   if (millis() > thermoTimer)
   {
-    currentState.temperature = thermocoupleRead() - 0.1f;//runningCfg.offsetTemp;
+    currentState.temperature = thermocoupleRead() - 0.1f; // runningCfg.offsetTemp;
     thermoTimer = millis() + GET_KTYPE_READ_EVERY;
-    Serial.print("temp value = ");
+    // Serial.print("temp value = ");
     Serial.println(currentState.temperature);
-
   }
 }
 //============================================
@@ -70,121 +72,25 @@ static void sensorsReadPressure(void)
     float elapsedTimeSec = elapsedTime / 1000.f;
     currentState.pressure = getPressure();
     previousSmoothedPressure = currentState.smoothedPressure;
-    currentState.smoothedPressure =  smoothPressure.updateEstimate(currentState.pressure);
+    currentState.smoothedPressure = smoothPressure.updateEstimate(currentState.pressure);
     currentState.pressureChangeSpeed = (currentState.smoothedPressure - previousSmoothedPressure) / elapsedTimeSec;
 
     pressureTimer = millis();
-
   }
 }
 
-static void lvl_init_VL6180X(void)
+// return the reading in mm of the tank water level.
+static void readTankWaterLevel(void)
 {
-
-  Wire.begin();
-  sensor.init();
-  sensor.configureDefault();
-
-  // Reduce range max convergence time and ALS integration
-  // time to 30 ms and 50 ms, respectively, to allow 10 Hz
-  // operation (as suggested by table "Interleaved mode
-  // limits (10 Hz operation)" in the datasheet).
-  sensor.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 30);
-  sensor.writeReg16Bit(VL6180X::SYSALS__INTEGRATION_PERIOD, 50);
-
-  sensor.setTimeout(500);
-
-  // stop continuous mode if already active
-  sensor.stopContinuous();
-  // in case stopContinuous() triggered a single-shot
-  // measurement, wait for it to complete
-  delay(300);
-  // start interleaved continuous mode with period of 100 ms
-  sensor.startInterleavedContinuous(100);
-}
-//=======================================================
-// TOF050C-VL6180x Raser waterlevel
-//=======================================================
-static void readTankWaterLevel()
-{
-  if (sensor.timeoutOccurred())
+  if (lcdCurrentPageId == NextionPage::Home)
   {
-    Serial.println(" TIMEOUT");
-  }
-  float Span = 148;
-  float GageSpan = 100;
-  float RatioValue = GageSpan / Span;
-  float RawValue = sensor.readRangeContinuousMillimeters();
-
-  float Gauge_Value = RatioValue * RawValue;
-  if (RawValue < 0)
-    RawValue = 0;
-  if (RawValue > Span)
-    RawValue = Span;
-
-  currentState.waterLvl = fabs(Gauge_Value - 100);
-  //Serial.print("lvl value = ");
-  //Serial.println(currentState.waterLvl);
-
-  if (sensor.timeoutOccurred())
-  {
-    Serial.println(" TIMEOUT");
+    // static uint32_t tof_timeout = millis();
+    // if (millis() >= tof_timeout) {
+    currentState.waterLvl = tof.readLvl();
+    // tof_timeout = millis() + 500;
+    // }
   }
 }
-
-//======================================================
-//
-//======================================================
-/*static void RTD_read()
-{
-  uint16_t rtd = thermo.readRTD();
-
-  // Serial.print("RTD value: ");
-  // Serial.println(rtd);
-  // float ratio = rtd;
-  // ratio /= 32768;
-  // Serial.print("Ratio = ");
-  // Serial.println(ratio, 8);
-  // Serial.print("Resistance = ");
-  // Serial.println(RREF * ratio, 8);
-  Serial.print("Temperature = ");
-  Serial.println(thermo.temperature(RNOMINAL, RREF));
-  currentState.temperature = thermo.temperature(RNOMINAL, RREF);
-  // Check and print any faults
-  uint8_t fault = thermo.readFault();
-  if (fault)
-  {
-    Serial.print("Fault 0x");
-    Serial.println(fault, HEX);
-    if (fault & MAX31865_FAULT_HIGHTHRESH)
-    {
-      Serial.println("RTD High Threshold");
-    }
-    if (fault & MAX31865_FAULT_LOWTHRESH)
-    {
-      Serial.println("RTD Low Threshold");
-    }
-    if (fault & MAX31865_FAULT_REFINLOW)
-    {
-      Serial.println("REFIN- > 0.85 x Bias");
-    }
-    if (fault & MAX31865_FAULT_REFINHIGH)
-    {
-      Serial.println("REFIN- < 0.85 x Bias - FORCE- open");
-    }
-    if (fault & MAX31865_FAULT_RTDINLOW)
-    {
-      Serial.println("RTDIN- < 0.85 x Bias - FORCE- open");
-    }
-    if (fault & MAX31865_FAULT_OVUV)
-    {
-      Serial.println("Under/Over voltage");
-    }
-    thermo.clearFault();
-  }
-  Serial.println();
-  delay(1000);
-}*/
 
 // #############################################################################################
 // ################################____LCD_REFRESH_CONTROL___###################################
