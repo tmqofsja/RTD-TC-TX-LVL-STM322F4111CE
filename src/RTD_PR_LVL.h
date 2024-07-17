@@ -7,18 +7,15 @@
 #include "peripherals/thermocouple.h"
 #include "peripherals/peripherals.h"
 #include "peripherals/tof.h"
-//#include "peripherals/rtd.h"
+#include "log.h"
+
 
 static inline void pinInit(void);
 static inline void SerialInit(void);
-//static inline void RTD_Init_Max31865(void);
 static void sensorsRead(void);
-//static void RTD_read(void);
-//static void lvl_init_VL6180X(void);
 static void readTankWaterLevel();
 static void lcdRefresh();
 static void sensorsReadTemperature(void);
-//static void readtkwaterlevel()
 static void sensorsReadPressure(void);
 
 

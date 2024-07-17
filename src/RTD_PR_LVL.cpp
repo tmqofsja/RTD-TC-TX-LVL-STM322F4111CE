@@ -1,9 +1,4 @@
-//#include <Adafruit_MAX31865.h>
-//#include "pindef.h"
-#include <Arduino.h>
-#include <Wire.h>
 #include "RTD_PR_LVL.h"
-//#include <VL6180X.h>
 
 SimpleKalmanFilter smoothPressure(0.6f, 0.6f, 0.1f);
 SimpleKalmanFilter smoothPumpFlow(0.1f, 0.1f, 0.01f);
@@ -12,11 +7,13 @@ SimpleKalmanFilter smoothConsideredFlow(0.1f, 0.1f, 0.1f);
 
 SensorState currentState;
 
-// VL6180X sensor; // TOF050C-VL6180x Raser waterlevel
-TOF tof;
+TOF tof; //level raser
 
 void setup()
 {
+  log_init();
+  LOG_INFO("RTD PR LVL (fw: %s) booting", AUTO_VERSION);
+
   SerialInit();
   pinInit();
   lcdInit();
@@ -44,7 +41,7 @@ static void sensorsRead(void)
 {
 
   sensorsReadTemperature();
-  readTankWaterLevel();
+  //readTankWaterLevel();
   sensorsReadPressure();
 }
 //==================================

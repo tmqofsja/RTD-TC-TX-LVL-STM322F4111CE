@@ -17,7 +17,7 @@
 #include "pindef.h"
 #include "ADS1X15.h"
 #include "lcd/lcd.h"
-//#include "../log.h"
+#include "../log.h"
 #include "i2c_bus_reset.h"
 
 #if defined SINGLE_BOARD
@@ -107,7 +107,7 @@ void getAdsError(void) {
 // ERROR CODE 3: I2C bus error. Could not clear. sdaPin data line held low
 void i2cResetState(void) {
   if (digitalRead(PIN_WIRE_SDA) != HIGH || digitalRead(PIN_WIRE_SCL) != HIGH || !ADS.isConnected()) {
-   // LOG_INFO("Reset I2C pins");
+    LOG_INFO("Reset I2C pins");
     short result = I2C_ClearBus(PIN_WIRE_SDA, PIN_WIRE_SCL);
     char tmp[25];
     unsigned int check = snprintf(tmp, sizeof(tmp), "I2C error code: %i", result);

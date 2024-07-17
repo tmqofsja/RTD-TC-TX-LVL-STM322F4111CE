@@ -5,7 +5,7 @@
 #include "pindef.h"
 
 #if defined(MAX31855) || defined(max6675) //(TC K TYPE)
-  #include <adafruit_MAX31855.h>
+  #include "Adafruit_MAX31855.h"
   SPIClass thermoSPI(thermoDI, thermoDO, thermoCLK);
   Adafruit_MAX31855 thermocouple(thermoCS, &thermoSPI);
 #elif defined(MAX31865) //(RTD PT100)
