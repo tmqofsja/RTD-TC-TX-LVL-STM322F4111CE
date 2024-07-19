@@ -7,7 +7,7 @@ SimpleKalmanFilter smoothConsideredFlow(0.1f, 0.1f, 0.1f);
 
 SensorState currentState;
 
-TOF tof; //level raser
+TOF tof; // level raser
 
 void setup()
 {
@@ -15,17 +15,13 @@ void setup()
   LOG_INFO("RTD PR LVL (fw: %s) booting", AUTO_VERSION);
 
   SerialInit();
-  pinInit();
-  lcdInit();
-  thermocoupleInit();
-  //  RTD_Init_Max31865();
-  // Init the tof sensor
-  tof.init(currentState);
-  // lvl_init_VL6180X();
+  pinInit(); 
+  lcdInit(); //nextion lcd
+  thermocoupleInit(); //temp
   adsInit(); // press tx
 
   // Init the tof sensor
-  // tof.init(currentState);
+  tof.init(currentState);//water level
 }
 
 void loop()
@@ -34,15 +30,20 @@ void loop()
   sensorsRead();
   lcdRefresh();
 }
-//======================================================
-//
+
 //======================================================
 static void sensorsRead(void)
 {
-
   sensorsReadTemperature();
-  //readTankWaterLevel();
+  readTankWaterLevel();
   sensorsReadPressure();
+  Serial.print("temp value = ");
+  Serial.println(currentState.temperature);
+  Serial.print("pressure = ");
+  Serial.println(currentState.pressure);
+  Serial.print("water tk lvl = ");
+  Serial.println(currentState.waterLvl);
+  
 }
 //==================================
 //
@@ -53,12 +54,9 @@ static void sensorsReadTemperature(void)
   {
     currentState.temperature = thermocoupleRead() - 0.1f; // runningCfg.offsetTemp;
     thermoTimer = millis() + GET_KTYPE_READ_EVERY;
-    // Serial.print("temp value = ");
-    Serial.println(currentState.temperature);
   }
 }
-//============================================
-//
+
 //============================================
 static void sensorsReadPressure(void)
 {
@@ -159,10 +157,7 @@ static void lcdRefresh(void)
 }
 
 //======================================================
-//
-//======================================================
 static inline void SerialInit()
 {
-
   Serial.begin(115200);
 }

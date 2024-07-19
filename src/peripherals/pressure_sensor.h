@@ -3,6 +3,7 @@
 #define PRESURE_SENSSOR_H
 
 #include <Arduino.h>
+#include "sensors_state.h"
 
 void adsInit(void);
 void i2cResetState(void);

@@ -1,7 +1,7 @@
 /* 09:32 15/03/2023 - change triggering comment */
 #include "lcd.h"
 #include "pindef.h"
-//#include "log.h"
+#include "log.h"
 #include <Arduino.h>
 
 EasyNex myNex(USART_LCD);
@@ -31,7 +31,7 @@ uint32_t lcdEncodeLedSettings(bool state, bool disco, uint8_t r, uint8_t g, uint
 void lcdInit(void) {
   myNex.begin(115200);
   while (!lcdCheckSerialInit("\x88\xFF\xFF\xFF", 4)) {
-    //LOG_VERBOSE("Connecting to Nextion LCD...");
+    LOG_VERBOSE("Connecting to Nextion LCD...");
     delay(5);
   }
   myNex.writeStr("splash.build_version.txt", AUTO_VERSION);

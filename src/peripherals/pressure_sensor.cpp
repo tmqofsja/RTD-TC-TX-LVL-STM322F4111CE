@@ -54,13 +54,13 @@ float getPressure(void) {  //returns sensor pressure data
   currentPressure = (ADS.getValue() - 2666) / 1777.8f; // 16bit
 #endif
 //===========================================
-float ddd = ADS.getValue();
-USART_ESP.print("ADS.getvalue = ");
-USART_ESP.println(ddd);  
+//currentState.ADS_getvalue = ADS.getValue();
+//USART_ESP.print("ADS.getvalue = ");
+//USART_ESP.println(ddd);  
 //=============================================
 
-Serial.print("press = ");
-Serial.println(currentPressure);
+//Serial.print("press = ");
+//Serial.println(currentPressure);
 //==================================================
 //USART_ESP.print("currentPressure = ");
 //USART_ESP.println(currentPressure);
