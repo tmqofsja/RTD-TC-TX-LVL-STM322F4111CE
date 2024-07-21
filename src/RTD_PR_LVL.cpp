@@ -8,6 +8,8 @@ SimpleKalmanFilter smoothConsideredFlow(0.1f, 0.1f, 0.1f);
 SensorState currentState;
 
 TOF tof; // level raser
+Adafruit_MPU6050 mpu;
+Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &Wire);
 
 void setup()
 {
@@ -22,6 +24,8 @@ void setup()
 
   // Init the tof sensor
   tof.init(currentState);//water level
+
+  //mpu6050Init();
 }
 
 void loop()
@@ -37,6 +41,7 @@ static void sensorsRead(void)
   sensorsReadTemperature();
   readTankWaterLevel();
   sensorsReadPressure();
+  //mpu6050Read();
   Serial.print("temp value = ");
   Serial.println(currentState.temperature);
   Serial.print("pressure = ");
@@ -45,6 +50,84 @@ static void sensorsRead(void)
   Serial.println(currentState.waterLvl);
   
 }
+
+//================================
+static void mpu6050Init(void) {
+
+   // Try to initialize!
+  if (!mpu.begin()) {
+    Serial.println("Failed to find MPU6050 chip");
+    while (1) {
+      delay(10);
+    }
+  }
+  Serial.println("MPU6050 Found!");
+// SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x32
+    Serial.println(F("SSD1306 allocation failed"));
+    for (;;)
+      ; // Don't proceed, loop forever
+  }
+  display.display();
+  delay(500); // Pause for 2 seconds
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setRotation(0);
+  
+}
+
+//===================================
+static void mpu6050Read(void) {
+
+sensors_event_t a, g, temp;
+  mpu.getEvent(&a, &g, &temp);
+
+  display.clearDisplay();
+  display.setCursor(0, 0);
+
+  Serial.print("Accelerometer ");
+  Serial.print("X: ");
+  Serial.print(a.acceleration.x, 1);
+  Serial.print(" m/s^2, ");
+  Serial.print("Y: ");
+  Serial.print(a.acceleration.y, 1);
+  Serial.print(" m/s^2, ");
+  Serial.print("Z: ");
+  Serial.print(a.acceleration.z, 1);
+  Serial.println(" m/s^2");
+
+  display.println("Accelerometer - m/s^2");
+  display.print(a.acceleration.x, 1);
+  display.print(", ");
+  display.print(a.acceleration.y, 1);
+  display.print(", ");
+  display.print(a.acceleration.z, 1);
+  display.println("");
+
+  Serial.print("Gyroscope ");
+  Serial.print("X: ");
+  Serial.print(g.gyro.x, 1);
+  Serial.print(" rps, ");
+  Serial.print("Y: ");
+  Serial.print(g.gyro.y, 1);
+  Serial.print(" rps, ");
+  Serial.print("Z: ");
+  Serial.print(g.gyro.z, 1);
+  Serial.println(" rps");
+
+  display.println("Gyroscope - rps");
+  display.print(g.gyro.x, 1);
+  display.print(", ");
+  display.print(g.gyro.y, 1);
+  display.print(", ");
+  display.print(g.gyro.z, 1);
+  display.println("");
+
+  display.display();
+  delay(100);
+  
+}
+
 //==================================
 //
 //===================================

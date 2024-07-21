@@ -9,6 +9,10 @@
 #include "peripherals/tof.h"
 #include "log.h"
 
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_Sensor.h>
+#include <Wire.h>
+#include <Adafruit_SSD1306.h>
 
 static inline void pinInit(void);
 static inline void SerialInit(void);
@@ -17,6 +21,9 @@ static void readTankWaterLevel();
 static void lcdRefresh();
 static void sensorsReadTemperature(void);
 static void sensorsReadPressure(void);
+
+static void mpu6050Read(void);
+static void mpu6050Init(void);
 
 
 
